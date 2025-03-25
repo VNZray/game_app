@@ -1,20 +1,72 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { useState } from "react";
+import {
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+} from "react-native";
+import { useFonts } from "expo-font";
+import { MathDuelProvider } from "./context/GameContext";
+
+import AppLoading from "expo-app-loading";
+import StartScreen from "./screen/StartScreen";
+import GameScreen from "./screen/GameScreen";
+import GameOverScreen from "./screen/GameOverScreen";
+import Computer from "./screen/Computer";
+import Multiplayer from "./screen/Multiplayer";
 
 export default function App() {
+  const [screenNum, setScreenNum] = useState(1);
+  let screen;
+
+  function changeScreenHandler(num) {
+    setScreenNum(num);
+  }
+
+  const [fontsLoaded] = useFonts({
+    "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+    "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
+  if (screenNum === 1) {
+    screen = <StartScreen onScreenChange={changeScreenHandler} />;
+  }
+
+  if (screenNum === 2) {
+    screen = <GameScreen onScreenChange={changeScreenHandler} />;
+  }
+
+  if (screenNum === 3) {
+    screen = <GameOverScreen onScreenChange={changeScreenHandler} />;
+  }
+  
+  if (screenNum === 4) {
+    screen = <Computer onScreenChange={changeScreenHandler} />;
+  }
+
+  if (screenNum === 5) {
+    screen = <Multiplayer onScreenChange={changeScreenHandler} />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <MathDuelProvider>
+      <SafeAreaView style={styles.rootScreen}>
+        <StatusBar />
+        {screen}
+      </SafeAreaView>
+    </MathDuelProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  rootScreen: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  backgroundImage: {
+    opacity: 0.15,
   },
 });
